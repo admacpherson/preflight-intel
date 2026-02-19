@@ -1,5 +1,6 @@
 import pytest
-from app.pireps import compute_bbox, build_corridor, filter_pireps_by_corridor
+from app.corridor import compute_bbox, build_corridor
+from app.pireps import filter_pireps_by_corridor
 
 # Sample airports
 KORD = (41.97, -87.90)
