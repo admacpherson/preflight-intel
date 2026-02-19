@@ -1,6 +1,7 @@
 import pytest
 from app.pireps import compute_bbox, build_corridor, filter_pireps_by_corridor
 
+# Sample airports
 KORD = (41.97, -87.90)
 KDEN = (39.85, -104.67)
 
@@ -20,7 +21,6 @@ def test_corridor_contains_midpoint():
     mid_lon = (KORD[1] + KDEN[1]) / 2
     from shapely.geometry import Point
     assert corridor.contains(Point(mid_lon, mid_lat))
-
 
 def test_filter_removes_out_of_corridor_pireps():
     from shapely.geometry import Point
