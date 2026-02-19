@@ -3,11 +3,16 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 class Config:
-    # Reference values/URLs
-    SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-change-in-prod")
+    # URL references
     AVIATIONWEATHER_BASE_URL = "https://aviationweather.gov/api/data"
     SQLALCHEMY_DATABASE_URI = "sqlite:///data/db.sqlite3"
+
+    # Filepath references
+    SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-change-in-prod")
+    DB_PATH = os.path.join(BASE_DIR, "data", "db.sqlite3")
 
     # Project settings
     CORRIDOR_WIDTH_NM = 50  # Nautical miles each side of route
