@@ -29,3 +29,16 @@ preflight-intel/
 ├── config.py              # App configuration
 └── run.py                 # Entry point
 ```
+
+## Setup
+
+### Airport Database
+This project uses the [OurAirports](https://ourairports.com) database for 
+airport coordinate lookups. It will download automatically on first run, 
+or you can download it manually:
+```bash
+curl -o data/airports.csv \
+  https://davidmegginson.github.io/ourairports-data/airports.csv
+```
+
+The file is gitignored and should not be committed to the repository.
