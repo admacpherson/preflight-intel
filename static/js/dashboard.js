@@ -46,17 +46,17 @@
                 panel.innerHTML = `<div class="empty-state">No PIREPs found along this route.</div>`;
                 return;
             }
-            panel.innerHTML = data.pireps.map(p => {
-                const turb = p.turbulenceCondition || p.turbulence || null;
-                const ice = p.icingCondition || p.icing || null;
-                const alt = p.altitude || "?";
+             panel.innerHTML = data.pireps.map(p => {
+                const turb = p.tbInt1 || null;
+                const ice = p.icgInt1 || null;
+                const alt = p.fltLvl ? `FL${String(p.fltLvl).padStart(3, '0')}` : "Unknown";
                 const raw = p.rawOb || "";
                 return `
                     <div class="data-card">
                         <div class="label">
-                            ${turb ? `<span class="badge badge-turb">TURB</span>` : ""}
-                            ${ice ? `<span class="badge badge-ice">ICE</span>` : ""}
-                            Alt: ${alt} ft &nbsp;|&nbsp; ${p.latitude?.toFixed(2)}, ${p.longitude?.toFixed(2)}
+                            ${turb && turb !== "NEG" ? `<span class="badge badge-turb">TURB</span>` : ""}
+                            ${ice && ice !== "" ? `<span class="badge badge-ice">ICE</span>` : ""}
+                            Alt: ${alt}ft &nbsp;|&nbsp; ${parseFloat(p.lat).toFixed(2)}, ${parseFloat(p.lon).toFixed(2)}
                         </div>
                         ${turb ? `<div>Turbulence: ${turb}</div>` : ""}
                         ${ice ? `<div>Icing: ${ice}</div>` : ""}
@@ -75,21 +75,19 @@
             const res = await fetch(`/api/atis?airports=${currentOrigin},${currentDestination}`);
             const data = await res.json();
             panel.innerHTML = data.airports.map(a => {
-                const changed = a.changed;
-                return `
-                    <div class="data-card">
-                        <div class="label">
-                            ${a.airport}
-                            <span class="badge ${changed ? 'badge-changed' : 'badge-ok'}">
-                                ${changed ? "CHANGED" : "NO CHANGE"}
-                            </span>
-                        </div>
-                        ${changed ? `
-                            <div>Previous: <span class="raw">${a.previous}</span></div>
-                            <div>Current: <span class="raw">${a.current}</span></div>
-                        ` : `<div class="raw">${a.reason || ""}</div>`}
-                    </div>`;
-            }).join("");
+            const changed = a.changed;
+            return `
+                <div class="data-card">
+                    <div class="label">
+                        ${a.airport}
+                        <span class="badge ${changed ? 'badge-changed' : 'badge-ok'}">
+                            ${changed ? "CHANGED" : "NO CHANGE"}
+                        </span>
+                    </div>
+                    ${changed ? `<div>Previous: <span class="raw">${a.previous}</span></div>` : ""}
+                    <div class="raw">${a.current || a.reason || "No data available"}</div>
+                </div>`;
+        }).join("");
         } catch (e) {
             panel.innerHTML = `<div class="empty-state">Error loading ATIS.</div>`;
         }

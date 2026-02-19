@@ -71,7 +71,12 @@ def check_for_atis_change(airport_icao: str) -> dict:
 
     if not last:
         save_atis(current)
-        return {"changed": False, "airport": airport_icao, "reason": "First observation saved"}
+        return {
+            "changed": False,
+            "airport": airport_icao,
+            "reason": "First observation saved",
+            "current": current["raw_text"]
+        }
 
     if current["raw_text"] != last["raw_text"]:
         save_atis(current)
@@ -82,4 +87,9 @@ def check_for_atis_change(airport_icao: str) -> dict:
             "current": current["raw_text"],
         }
 
-    return {"changed": False, "airport": airport_icao, "reason": "No change detected"}
+    return {
+        "changed": False,
+        "airport": airport_icao,
+        "reason": "No change detected",
+        "current": current["raw_text"]
+    }

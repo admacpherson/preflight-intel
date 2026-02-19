@@ -63,13 +63,12 @@ def build_corridor(origin: tuple, destination: tuple, width_nm: float = Config.C
 
 
 def filter_pireps_by_corridor(pireps: list[dict], corridor) -> list[dict]:
-    """Return only PIREPs whose location falls within the corridor."""
     filtered = []
     for pirep in pireps:
         try:
-            lat = pirep["latitude"]
-            lon = pirep["longitude"]
-            point = Point(lon, lat)   # Shapely uses (lon, lat)
+            lat = pirep["lat"]
+            lon = pirep["lon"]
+            point = Point(lon, lat)
             if corridor.contains(point):
                 filtered.append(pirep)
         except (KeyError, TypeError):

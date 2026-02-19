@@ -26,10 +26,10 @@ def test_filter_removes_out_of_corridor_pireps():
     from shapely.geometry import Point
     corridor = build_corridor(KORD, KDEN)
     fake_pireps = [
-        {"latitude": 40.9, "longitude": -96.0},    # Close to route centerline
-        {"latitude": 25.0, "longitude": -80.0},    # Miami, clearly outside
-        {"latitude": 48.0, "longitude": -122.0},   # Seattle, clearly outside
+        {"lat": 40.9, "lon": -96.0},
+        {"lat": 25.0, "lon": -80.0},
+        {"lat": 48.0, "lon": -122.0},
     ]
     results = filter_pireps_by_corridor(fake_pireps, corridor)
     assert len(results) == 1
-    assert results[0]["longitude"] == -96.0
+    assert results[0]["lon"] == -96.0
