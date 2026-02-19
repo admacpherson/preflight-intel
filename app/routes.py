@@ -1,14 +1,17 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, render_template
 from app.pireps import get_route_pireps
 from app.atis import check_for_atis_change
 from app.airports import get_airport, get_coords
+import folium
+from io import BytesIO
+from app.airports import get_coords
 
 main = Blueprint("main", __name__)
 
 
 @main.route("/")
 def index():
-    return "Preflight Intel hello world"
+    return render_template("index.html")
 
 
 @main.route("/api/pireps")
@@ -63,3 +66,25 @@ def atis():
         results.append(status)
 
     return jsonify({"airports": results})
+
+@main.route("/api/map")
+def map_view():
+    origin = request.args.get("origin", "").upper()
+    destination = request.args.get("destination", "").upper()
+
+    origin_coords = get_coords(origin)
+    destination_coords = get_coords(destination)
+
+    if not origin_coords or not destination_coords:
+        return "Airport not found", 404
+
+    mid_lat = (origin_coords[0] + destination_coords[0]) / 2
+    mid_lon = (origin_coords[1] + destination_coords[1]) / 2
+
+    m = folium.Map(location=[mid_lat, mid_lon], zoom_start=5, tiles="CartoDB dark_matter")
+
+    folium.Marker(origin_coords, tooltip=origin, icon=folium.Icon(color="green")).add_to(m)
+    folium.Marker(destination_coords, tooltip=destination, icon=folium.Icon(color="red")).add_to(m)
+    folium.PolyLine([origin_coords, destination_coords], color="#00d4ff", weight=2, opacity=0.7).add_to(m)
+
+    return m._repr_html_()
