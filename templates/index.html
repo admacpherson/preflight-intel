@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Preflight Intel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</head>
+<body>
+
+<header>
+    <h1>⚡ Preflight Intel</h1>
+    <div class="route-form">
+        <input type="text" id="origin" placeholder="KORD" maxlength="4">
+        <span style="color:#555">→</span>
+        <input type="text" id="destination" placeholder="KDEN" maxlength="4">
+        <button onclick="loadRoute()">LOAD ROUTE</button>
+    </div>
+    <div class="refresh-status" id="refresh-status">Not monitoring</div>
+</header>
+
+<div class="main-content">
+    <div id="map-container">
+        <div class="empty-state" style="margin-top: 20%; color: #555;">
+            Enter a route above to begin.
+        </div>
+    </div>
+
+    <div class="data-panel">
+        <div class="panel-tabs">
+            <div class="tab active" onclick="switchTab('pireps')">PIREPs</div>
+            <div class="tab" onclick="switchTab('atis')">ATIS</div>
+        </div>
+        <div class="tab-content active" id="tab-pireps">
+            <div class="empty-state">No route loaded.</div>
+        </div>
+        <div class="tab-content" id="tab-atis">
+            <div class="empty-state">No route loaded.</div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
