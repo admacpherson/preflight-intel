@@ -31,7 +31,7 @@
 
     async function refresh() {
         document.getElementById("refresh-status").textContent = "Refreshing...";
-        await Promise.all([loadPireps(), loadAtis(), loadMap()]);
+        await Promise.all([loadPireps(), loadAtis(), loadSigmets(), loadMap()]);
         const now = new Date().toLocaleTimeString();
         document.getElementById("refresh-status").textContent = `Last updated: ${now} — refreshes every 5 min`;
     }
@@ -103,3 +103,41 @@
             container.innerHTML = `<iframe src="${url}"></iframe>`;
         }
     }
+
+    async function loadSigmets() {
+    const panel = document.getElementById("tab-sigmets");
+    panel.innerHTML = `<div class="loading">Fetching SIGMETs...</div>`;
+    try {
+        const res = await fetch(`/api/sigmets?origin=${currentOrigin}&destination=${currentDestination}`);
+        const data = await res.json();
+        if (!data.sigmets || data.sigmets.length === 0) {
+            panel.innerHTML = `<div class="empty-state">No SIGMETs or AIRMETs along this route.</div>`;
+            return;
+        }
+        panel.innerHTML = data.sigmets.map(s => {
+            const type = s.airSigmetType || "SIGMET";
+            const hazard = s.hazard || "UNKNOWN";
+            const altLow = s.altitudeLow1 ? `${s.altitudeLow1.toLocaleString()}ft` : "SFC";
+            const altHi = s.altitudeHi1 ? `FL${String(s.altitudeHi1/100).padStart(3,'0')}` : "?";
+            const validTo = s.validTimeTo ? new Date(s.validTimeTo * 1000).toUTCString() : "?";
+            const movement = s.movementDir && s.movementSpd
+                ? `Moving ${s.movementDir}° at ${s.movementSpd}kt`
+                : "Movement unknown";
+            const badgeClass = hazard === "CONVECTIVE" ? "badge-turb" :
+                               hazard === "ICING" ? "badge-ice" : "badge-changed";
+            return `
+                <div class="data-card">
+                    <div class="label">
+                        <span class="badge ${badgeClass}">${type}</span>
+                        <span class="badge badge-changed">${hazard}</span>
+                    </div>
+                    <div>Altitude: ${altLow} – ${altHi}</div>
+                    <div>${movement}</div>
+                    <div>Valid until: ${validTo}</div>
+                    <div class="raw">${s.rawAirSigmet.replace(/\n/g, ' ')}</div>
+                </div>`;
+        }).join("");
+    } catch (e) {
+        panel.innerHTML = `<div class="empty-state">Error loading SIGMETs.</div>`;
+    }
+}
