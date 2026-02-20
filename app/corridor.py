@@ -4,6 +4,16 @@ from shapely.ops import transform
 from config import Config
 
 
+def calculate_distance_nm(origin: tuple, destination: tuple) -> float:
+    """Calculate great circle distance in nautical miles between two (lat, lon) tuples."""
+    geod = pyproj.Geod(ellps="WGS84")
+    _, _, distance_m = geod.inv(
+        origin[1], origin[0],
+        destination[1], destination[0]
+    )
+    return distance_m / 1852
+
+
 def compute_bbox(origin: tuple, destination: tuple, padding_deg: float = 1.0) -> tuple:
     """
     Compute a bounding box that encompasses the full great circle path with padding.
@@ -18,13 +28,19 @@ def compute_bbox(origin: tuple, destination: tuple, padding_deg: float = 1.0) ->
     return (min_lat, min_lon, max_lat, max_lon)
 
 
-def build_great_circle_line(origin: tuple, destination: tuple, num_points: int = 100) -> LineString:
+def build_great_circle_line(origin: tuple, destination: tuple) -> LineString:
     """
     Generate a LineString following the great circle path between two points.
     origin and destination are (lat, lon) tuples.
-    num_points controls how smooth the arc is.
+    Point count scales automatically with route distance
     """
     geod = pyproj.Geod(ellps="WGS84")
+
+    # Calculate total distance in nautical miles
+    distance_nm = calculate_distance_nm(origin, destination)
+
+    # One point per 50nm, minimum 10, maximum 500
+    num_points = int(max(10, min(500, int(distance_nm / 50))))
 
     # npts returns intermediate points, not including start/end
     intermediate = geod.npts(
