@@ -3,6 +3,7 @@ from app.atis import check_for_atis_change
 from app.airports import get_airport, get_coords
 from app.pireps import get_route_pireps
 from app.sigmets import get_route_sigmets, parse_sigmet_polygon
+from app.corridor import build_great_circle_line
 import folium
 
 main = Blueprint("main", __name__)
@@ -122,7 +123,9 @@ def map_view():
     m = folium.Map(location=[mid_lat, mid_lon], zoom_start=5, tiles="CartoDB dark_matter")
 
     # Route line
-    folium.PolyLine([origin_coords, destination_coords], color="#00d4ff", weight=2, opacity=0.7).add_to(m)
+    gc_line = build_great_circle_line(origin_coords, destination_coords)
+    gc_coords = [[lat, lon] for lon, lat in gc_line.coords]  # Folium uses [lat, lon]
+    folium.PolyLine(gc_coords, color="#00d4ff", weight=2, opacity=0.7).add_to(m)
 
     # Airport markers
     folium.Marker(origin_coords, tooltip=origin, icon=folium.Icon(color="green")).add_to(m)
