@@ -1,6 +1,8 @@
 # preflight-intel
 A tool for pilots to view weather conditions by pulling ATIS and PIREPs along a specified route.
 
+---
+
 ## Features
 **Route-Aware PIREP Feed**
 Pilot weather reports (PIREPs) are fetched from AviationWeather.gov and filtered to a 50nm corridor around your route. Each report is plotted on the map with color-coded severity markers — red for severe turbulence or icing, orange for moderate turbulence, blue for moderate icing, yellow for light turbulence, and green for no significant weather.
@@ -13,6 +15,8 @@ Active SIGMETs and AIRMETs that intersect your route corridor are displayed both
 
 **Auto-Refresh**
 Once a route is loaded, all three data sources refresh automatically every 5 minutes so you can monitor conditions leading up to departure without manually reloading.
+
+---
 
 ## Repository Structure
 ```
@@ -44,7 +48,7 @@ preflight-intel/
 ├── pytest.ini             # Pytest path and test configuration
 └── run.py                 # Entry point
 ```
-
+---
 
 ## Usage
 
@@ -68,17 +72,56 @@ All configurable values in `config.py`. You can modify these to use the tool to 
 | `POLL_INTERVAL_SECONDS` | `300`   | How often the dashboard auto-refreshes (seconds)            |
 | `PIREP_ALTITUDE_LEVEL`  | `0`     | Altitudes at which to get PIREPS (0 includes all altitudes) |
 
+---
+
 ## Setup
+
+**1. Clone the repository**
+```bash
+git clone https://github.com/admacpherson/preflight-intel.git
+cd preflight-intel
+```
+
+**2. Create and activate a virtual environment**
+```bash
+python -m venv venv
+source venv/bin/activate        # Windows: venv\Scripts\activate
+```
+
+**3. Install dependencies**
+```bash
+pip install -r requirements.txt
+```
+
+**4. Run the app**
+```bash
+python run.py
+```
+
+**5. Open your browser**
+```
+http://127.0.0.1:5000
+```
+
+On first run, the airport database will download automatically from OurAirports (~12.5MB). This only happens once.
+
+---
 
 ## Data Sources
 
-| Source           | Data | URL |
-|------------------|---|---|
-| AviationWeather.gov | PIREPs, ATIS, SIGMETs, AIRMETs | https://aviationweather.gov/api |
-| OurAirports      | Airport coordinates and metadata | https://ourairports.com |
+| Source              | Data                             | URL                             |
+|---------------------|----------------------------------|---------------------------------|
+| AviationWeather.gov | PIREPs, ATIS, SIGMETs, AIRMETs   | https://aviationweather.gov/api |
+| OurAirports         | Airport coordinates and metadata | https://ourairports.com         |
 All data is fetched live from free, public APIs, except for the [OurAirports](https://ourairports.com) database for airport coordinate lookups. It will download automatically on first run, or you can download it manually:
 ```bash
 curl -o data/airports.csv \
   https://davidmegginson.github.io/ourairports-data/airports.csv
 ```
 No API keys are required at any point.
+
+---
+
+# Disclaimer
+
+Preflight Intel is intended as a supplementary situational awareness tool only. It is **not** a certified weather briefing service and should **not** be used as a substitute for an official FAA weather briefing. Always obtain a full weather briefing from an approved source (1800wxbrief.com, ForeFlight, etc.) before flight.
