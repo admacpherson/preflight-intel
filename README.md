@@ -5,40 +5,38 @@ A tool for pilots to view weather conditions by pulling ATIS and PIREPs along a 
 ```
 preflight-intel/
 ├── app/
-│   ├── __init__.py
+│   ├── __init__.py        # App factory and database initialization
+│   ├── airports.py        # Airport lookup from OurAirports database
+│   ├── atis.py            # ATIS fetching and change detection
+│   ├── corridor.py        # Route corridor geometry
+│   ├── pireps.py          # PIREP fetching and corridor filtering
 │   ├── routes.py          # Flask route handlers
-│   ├── pireps.py          # PIREP fetching + filtering logic
-│   ├── atis.py            # ATIS polling + diff logic
-│   ├── sigmets.py         # SIGMET/AIRMET fetching + filtering
-│   ├── corridor.py        # Route corridor geometry (shapely)
-│   └── alerts.py          # Email/SMS alert dispatching
+│   └── sigmets.py         # SIGMET/AIRMET fetching and filtering
+├── data/
+│   └── db.sqlite3         # Local database (gitignored)
 ├── static/
 │   ├── css/
+│   │   └── dashboard.css  # Dashboard styles
 │   └── js/
+│       └── dashboard.js   # Dashboard logic and API calls
 ├── templates/
-│   └── index.html         # Main dashboard
-├── data/
-│   └── db.sqlite3         # SQLite database (gitignored)
+│   └── index.html         # Main dashboard template
 ├── tests/
-│   ├── test_pireps.py
-│   ├── test_atis.py
-│   └── test_corridor.py
-├── .env                   # API keys, secrets (gitignored)
+│   ├── conftest.py        # Pytest path configuration
+│   ├── test_atis.py       # ATIS unit tests
+│   └── test_pireps.py     # PIREP and corridor unit tests
 ├── .gitignore
-├── requirements.txt
 ├── config.py              # App configuration
+├── requirements.txt
+├── pytest.ini             # Pytest path and test configuration
 └── run.py                 # Entry point
 ```
 
 ## Setup
 
 ### Airport Database
-This project uses the [OurAirports](https://ourairports.com) database for 
-airport coordinate lookups. It will download automatically on first run, 
-or you can download it manually:
+This project uses the [OurAirports](https://ourairports.com) database for airport coordinate lookups. It will download automatically on first run, or you can download it manually:
 ```bash
 curl -o data/airports.csv \
   https://davidmegginson.github.io/ourairports-data/airports.csv
 ```
-
-The file is gitignored and should not be committed to the repository.
