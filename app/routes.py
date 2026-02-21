@@ -69,6 +69,9 @@ def atis():
 
 def pirep_marker_color(pirep: dict) -> str:
     """Return a color based on the most significant condition reported."""
+    if pirep.get("pirepType") == "ARP":
+        return "#aa00ff"  # Purple for strong wind ACARS reports
+
     turb = pirep.get("tbInt1", "")
     ice = pirep.get("icgInt1", "")
 
