@@ -1,4 +1,4 @@
-# preflight-intel
+# Preflight Intel
 A tool for pilots to view weather conditions by pulling ATIS and PIREPs along a specified route.
 
 ---
@@ -15,6 +15,8 @@ Active SIGMETs and AIRMETs that intersect your route corridor are displayed both
 
 **Auto-Refresh**
 Once a route is loaded, all three data sources refresh automatically every 5 minutes so you can monitor conditions leading up to departure without manually reloading.
+
+![Screenshot](static/images/Example%20Screenshot.png)
 
 ---
 
